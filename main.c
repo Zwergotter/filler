@@ -61,12 +61,10 @@ int		fitting(t_fil *fil, int x, int y)
 	int j;
 	int mv_x;
 	int mv_y;
-	int crash;
 	int place;
 
 	j = 0;
 	mv_y = y;
-	crash = 1;
 	place = 0;
 	while (j < fil->p_col)
 	{ 	
@@ -75,8 +73,8 @@ int		fitting(t_fil *fil, int x, int y)
 		while (i < fil->p_line)
 		{
 			if (fil->piece[i + (j * fil->p_line)] == '*' && ((mv_x < 0 || mv_y < 0) || (mv_x > fil->m_line || mv_y > fil->m_col)))
-				crash++;
-			if (fil->piece[i + (j * fil->p_line)] == '*' && (mv_x >= 0 && mv_y >= 0) && fil->map[mv_x + (mv_y * fil->m_line)] == fil->player)
+				place = 2;
+			if (fil->piece[i + (j * fil->p_line)] == '*' && (mv_x >= 0 && mv_y >= 0) && fil->map[mv_x + 4+ (mv_y * (fil->m_line + 4))] == fil->player)
 				place++;
 			mv_x++;
 			i++;
@@ -84,7 +82,7 @@ int		fitting(t_fil *fil, int x, int y)
 		mv_y++;
 		j++;
 	}
-	if (place == 1 && crash == 1)
+	if (place == 1)
 		return (1);
 	return (0);
 }
