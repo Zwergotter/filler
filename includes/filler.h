@@ -21,6 +21,7 @@ typedef struct	s_fil
 	char		*map;
 	char 		*piece;
 	char		player;
+	char		opp;
 	int			m_line;
 	int			m_col;
 	int 		p_line;

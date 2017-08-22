@@ -6,7 +6,7 @@
 /*   By: edeveze <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/17 15:11:38 by edeveze           #+#    #+#             */
-/*   Updated: 2017/08/17 15:11:41 by edeveze          ###   ########.fr       */
+/*   Updated: 2017/08/22 15:00:45 by edeveze          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,17 @@ void	init(t_fil *fil)
 
 	get_next_line(0, &line);
 	fil->player = (line[10] == '1' ? 'O' : 'X');
+	fil->opp = (line[10] == '1' ? 'X' : 'O');
 	free(line);
 	get_next_line(0, &line);
-	fil->m_col = ft_atoi(line + 8);
+	ft_putstr_fd("line = ", 2);
+	ft_putstr_fd(line, 2);
+	ft_putstr_fd("\n", 2);
+	fil->m_line = ft_atoi(line + 8);
 	i = 0;
 	while (line[i + 9] != ' ')
 		i++;
-	fil->m_line = ft_atoi(line + i + 9);
+	fil->m_col = ft_atoi(line + i + 9);
 	free(line);
 	fil->map = NULL;
 	fil->piece = NULL;
@@ -64,22 +68,25 @@ int		fitting(t_fil *fil, int x, int y)
 	int place;
 
 	j = 0;
-	mv_y = y;
+	mv_x = x;
 	place = 0;
 	while (j < fil->p_col)
-	{ 	
-		mv_x = x;
+	{
+		mv_y = y;
 		i = 0;
 		while (i < fil->p_line)
 		{
-			if (fil->piece[i + (j * fil->p_line)] == '*' && ((mv_x < 0 || mv_y < 0) || (mv_x > fil->m_line || mv_y > fil->m_col)))
-				place = 2;
-			if (fil->piece[i + (j * fil->p_line)] == '*' && (mv_x >= 0 && mv_y >= 0) && fil->map[mv_x + 4+ (mv_y * (fil->m_line + 4))] == fil->player)
-				place++;
-			mv_x++;
+			if (fil->piece[j + (i * fil->p_col)] == '*')
+			{
+				if (mv_x < 0 || mv_y < 0 || mv_x >= fil->m_col || mv_y >= fil->m_line || fil->map[mv_x + 4 + mv_y * (fil->m_col + 4)] == fil->opp)
+					place = 2;
+				if (mv_x >= 0 && mv_y >= 0 && fil->map[mv_x + 4 + mv_y * (fil->m_col + 4)] == fil->player)
+					place++;
+			}
+			mv_y++;
 			i++;
 		}
-		mv_y++;
+		mv_x++;
 		j++;
 	}
 	if (place == 1)
@@ -92,11 +99,12 @@ void	finding_place(t_fil *fil)
 	int	x;
 	int y;
 
-	y = 0 - fil->p_col;
-	while (!(fitting(fil, x, y)) && ++y < fil->m_col)
+	y = -fil->p_line;
+	x = -fil->p_col;
+	while (!(fitting(fil, x, y)) && ++y < fil->m_line)
 	{
-		x = 1 - fil->p_line;
-		while (!(fitting(fil, x, y)) && x < fil->m_line)
+		x = -fil->p_col;
+		while (!(fitting(fil, x, y)) && x < fil->m_col)
 			x++;
 	}
 	if (fitting(fil, x, y))
@@ -113,7 +121,9 @@ int		main(void)
 	t_fil	*fil;
 	char	*line;
 	int 	i;
+	int 	nb;
 
+	nb = 0;
 	if (!(fil = malloc(sizeof(t_fil))))
 	{
 		ft_putstr_fd("Memory allocation failed", 2);
@@ -122,21 +132,30 @@ int		main(void)
 	init(fil);
 	while (1)
 	{
+		if (!get_next_line(0, &line)) // pas en option gros
+			break ;
+		if (nb)
+			get_next_line(0, &line);
 		fil->map = ft_strdup("");
-		while (get_next_line(0, &line) > 0 && line[0] != 'P')
+		while ((i = get_next_line(0, &line)) > 0 && line[0] != 'P')
 			fil->map = ft_strjoinfree(fil->map, line, 3);
-		fil->p_col = ft_atoi(line + 6);
+		// ft_putstr_fd("map = \n", 2);
+		// ft_putstr_fd(fil->map, 2);
+		// ft_putstr_fd("BITE\n", 2);
+		fil->p_line = ft_atoi(line + 6);
 		i = 0;
 		while (line[i + 7] != ' ')
 			i++;
-		fil->p_line = ft_atoi(line + i + 7);
+		fil->p_col = ft_atoi(line + i + 7);
 		free(line);
+		i = 0;
 		fil->piece = ft_strdup("");
-		while (get_next_line(0, &line) > 0)
+		while (i++ < fil->p_line && get_next_line(0, &line) > 0)
 			fil->piece = ft_strjoinfree(fil->piece, line, 3);
 		finding_place(fil);
 		free(fil->map);
 		free(fil->piece);
+		nb = 1;
 	}
 	free(fil);
 	return (0);

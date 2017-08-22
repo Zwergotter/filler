@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cosi <cosi@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: edeveze <edeveze@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/06 18:48:47 by edeveze           #+#    #+#             */
-/*   Updated: 2017/07/09 01:03:59 by cosi             ###   ########.fr       */
+/*   Updated: 2017/08/21 18:56:28 by edeveze          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,17 @@
 # include <sys/uio.h>
 
 # define BUFF_SIZE 10
+
+typedef struct	s_struct
+{
+	int				fd;
+	int				ret;
+	int				l;
+	char			d;
+	char			bf[BUFF_SIZE + 1];
+	char			tmp[BUFF_SIZE + 1];
+	struct s_struct	*next;
+}				t_struct;
 
 typedef struct		s_list
 {

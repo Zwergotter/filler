@@ -12,103 +12,59 @@
 
 #include "libft.h"
 
-/*
-** Searches newline in string passed as argument. Returns its position or 0.
-*/
-
-int		find_character(char *str)
+t_struct	*multi(t_struct **s, t_struct *e, int fd)
 {
-	int	i;
-
-	i = 0;
-	while (str[i] && str[i] != '\n')
-		i++;
-	if (str[i] == '\n')
-		return (i);
-	return (0);
-}
-
-/*
-** Has as arguments buf, where we stored what was read, ret and saved.
-** It stores what there is in saved in a temporary string.
-** Checks if tmp exist or not, then stores in saved either saved and buf or buf.
-*/
-
-void	fill_saved(char *buf, int ret, char **saved)
-{
-	char		*tmp;
-
-	buf[ret] = '\0';
-	tmp = *saved;
-	if (tmp)
+	if (*s == NULL)
 	{
-		*saved = ft_strjoin(*saved, buf);
-		free(tmp);
+		if (!(*s = malloc(sizeof(t_struct))))
+			return (NULL + 1);
+		(*s)->fd = fd;
+		(*s)->bf[0] = 0;
+		(*s)->next = NULL;
 	}
-	else
-		*saved = ft_strdup(buf);
+	e = *s;
+	while (e->fd != fd)
+	{
+		if (!e->next)
+		{
+			if (!(e->next = malloc(sizeof(t_struct))))
+				return (NULL + 1);
+			e->next->fd = fd;
+			e->next->bf[0] = 0;
+			e->next->next = NULL;
+		}
+		e = e->next;
+	}
+	if (e->bf[0] == 0 && (e->ret = read(fd, e->bf, BUFF_SIZE)) == 0)
+		return (0);
+	e->d = 0;
+	return (e);
 }
 
-/*
-** It stores a read line from saved in line.
-** Creates a int newline and a char *tmp.
-** If newline = 1, nl is at the beginning. Line is created with strnew(0).
-** Else, line is created with strsub starting at temp's beginning and coping it
-** before newline's position.
-** saved is created with strdup after newline's position.
-*/
-
-void	line_read(char **line, char **saved)
+int			get_next_line(const int fd, char **line)
 {
-	int		newline;
-	char	*tmp;
+	static t_struct	*s = NULL;
+	t_struct		*e;
 
-	tmp = *saved;
-	newline = find_character(tmp) + 1;
-	if (newline == 1)
-		*line = ft_strnew(0);
-	else
-		*line = ft_strsub(tmp, 0, newline - 1);
-	*saved = ft_strdup(tmp + newline);
-	free(tmp);
-}
-
-/*
-** Receives a file descriptor and the line where to store.
-** It returns -1, 0 or 1, depending on whether an error happened, the file's
-** reading has been completed or a line has been read.
-** Checks errors and then reads from fd in a loop, calling fill_saved in it,
-** until saved contains nothing or a newline is found.
-** Checks other possible errors after reading.
-** If reading is over and no newline had been found in saved, line takes saved
-** value and if saved is empty so we return 0, else 1.
-** Else we can call line_read and return 1.
-*/
-
-int		get_next_line(const int fd, char **line)
-{
-	static char	*saved = NULL;
-	char		buf[BUFF_SIZE + 1];
-	int			ret;
-
-	if (fd < 0 || BUFF_SIZE <= 0)
+	if (line == NULL || (*line = ft_strdup("")) == 0)
 		return (-1);
-	while ((ret = read(fd, buf, BUFF_SIZE)) > 0)
+	if ((e = multi(&s, 0, fd)) == 0 || e == NULL + 1)
+		return (e == 0 ? 0 : -1);
+	while (e->d == 0)
 	{
-		fill_saved(buf, ret, &saved);
-		if ((saved == NULL) || ft_strchr(saved, '\n'))
-			break ;
+		if (e->bf[0] == 0)
+			if ((e->ret = read(fd, e->bf, BUFF_SIZE)) == -1)
+				return (-1);
+		e->bf[e->ret] = 0;
+		e->l = ft_strchr(e->bf, '\n') ? ft_strchr(e->bf, '\n') - e->bf
+		: ft_strlen(e->bf);
+		e->d = !e->bf[0] || ft_strchr(e->bf, '\n') ? 1 : 0;
+		ft_memcpy(e->tmp, e->bf, e->l);
+		e->tmp[e->l] = 0;
+		if (e->bf[0] != 0)
+			ft_memcpy(e->bf, e->bf + e->l + e->d, ft_strlen(e->bf) - e->l + 1);
+		if (!(*line = ft_strjoinfree(*line, e->tmp, 1)))
+			return (-1);
 	}
-	if (ret < 0 || saved == NULL)
-		return (-1);
-	if (ret < 1 && !ft_strchr(saved, '\n'))
-	{
-		*line = saved;
-		if (saved == NULL || saved[0] == '\0')
-			return (0);
-		saved = NULL;
-		return (1);
-	}
-	line_read(line, &saved);
 	return (1);
 }
