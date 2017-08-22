@@ -19,9 +19,13 @@
 typedef struct	s_fil
 {
 	char		*map;
+	char		*map2;
 	char 		*piece;
 	char		player;
 	char		opp;
+	int			nb;
+	int			start_opp;
+	int			end_opp;
 	int			m_line;
 	int			m_col;
 	int 		p_line;

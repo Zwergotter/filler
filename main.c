@@ -55,6 +55,9 @@ void	init(t_fil *fil)
 	free(line);
 	fil->map = NULL;
 	fil->piece = NULL;
+	fil->nb = 0;
+	fil->start_opp = 0;
+	fil->end_opp = 0;
 	fil->p_line = 0;
 	fil->p_col = 0;
 }
@@ -116,6 +119,30 @@ void	finding_place(t_fil *fil)
 	ft_putchar('\n');
 }
 
+void	opp_pos(t_fil *fil)
+{
+	int i;
+
+	i = -1;
+	if (fil->nb == 0)
+	{
+		while (fil->map[++i])
+		{
+			if (fil->map[i] == fil->opp)
+			{
+				fil->start_opp = i;
+				return ;
+			}
+		}
+	}
+	while (fil->map[++i])
+	{
+		if (fil->map[i] != fil->map2[i] && fil->map[i] == fil->opp)
+			fil->end_opp = i;
+	}
+	free(fil->map2);
+}
+
 int		main(void)
 {
 	t_fil	*fil;
@@ -136,12 +163,11 @@ int		main(void)
 			break ;
 		if (nb)
 			get_next_line(0, &line);
+		fil->nb = nb;
 		fil->map = ft_strdup("");
 		while ((i = get_next_line(0, &line)) > 0 && line[0] != 'P')
 			fil->map = ft_strjoinfree(fil->map, line, 3);
-		// ft_putstr_fd("map = \n", 2);
-		// ft_putstr_fd(fil->map, 2);
-		// ft_putstr_fd("BITE\n", 2);
+		opp_pos(fil);
 		fil->p_line = ft_atoi(line + 6);
 		i = 0;
 		while (line[i + 7] != ' ')
@@ -153,8 +179,9 @@ int		main(void)
 		while (i++ < fil->p_line && get_next_line(0, &line) > 0)
 			fil->piece = ft_strjoinfree(fil->piece, line, 3);
 		finding_place(fil);
-		free(fil->map);
+		// free(fil->map);
 		free(fil->piece);
+		fil->map2 = fil->map;
 		nb = 1;
 	}
 	free(fil);
