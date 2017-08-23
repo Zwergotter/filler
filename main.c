@@ -44,9 +44,9 @@ void	init(t_fil *fil)
 	fil->opp = (line[10] == '1' ? 'X' : 'O');
 	free(line);
 	get_next_line(0, &line);
-	ft_putstr_fd("line = ", 2);
-	ft_putstr_fd(line, 2);
-	ft_putstr_fd("\n", 2);
+	// ft_putstr_fd("line = ", 2);
+	// ft_putstr_fd(line, 2);
+	// ft_putstr_fd("\n", 2);
 	fil->m_line = ft_atoi(line + 8);
 	i = 0;
 	while (line[i + 9] != ' ')
@@ -62,6 +62,12 @@ void	init(t_fil *fil)
 	fil->end_ply = 0;
 	fil->p_line = 0;
 	fil->p_col = 0;
+	fil->mid = 0;
+	fil->top_left = 0;
+	fil->top_right = 0;
+	fil->bot_left = 0;
+	fil->bot_right = 0;	
+	fil->dir = EMPTY;
 }
 
 int		fitting(t_fil *fil, int x, int y)
@@ -99,13 +105,21 @@ int		fitting(t_fil *fil, int x, int y)
 	return (0);
 }
 
+// void	trying_to_fit(t_fil *fil, int pos)
+// {
+// 	if (pos )
+// }
+
 void	finding_place(t_fil *fil)
 {
 	int	x;
 	int y;
+	int pos;
 
 	y = -fil->p_line;
 	x = -fil->p_col;
+	pos = (fil->end_ply ? fil->end_ply : fil->start_ply);
+	// trying_to_fit(fil, pos);
 	while (!(fitting(fil, x, y)) && ++y < fil->m_line)
 	{
 		x = -fil->p_col;
@@ -121,21 +135,56 @@ void	finding_place(t_fil *fil)
 	ft_putchar('\n');
 }
 
+// void	directions(t_fil *fil, int x, int y, int i)
+// {
+// 	fil->start_ply = i;
+
+// 	if ()
+// }
+
 void	positions(t_fil *fil)
 {
 	int i;
+	int	x;
+	int y;
 
 	i = -1;
+	x = -1;
+	y = 0;
 	if (fil->nb == 0)
 	{
-		while (fil->map[++i])
+		while((fil->map[++y + 4 + (y * (fil->m_line + 4))] && y <= fil->m_col))
 		{
-			if (fil->map[i] == fil->opp && !fil->start_opp)
-				fil->start_opp = i;
-			if (fil->map[i] == fil->player && !fil->start_ply)
-				fil->start_ply = i;
+			x = -1;
+			while (fil->map[++x + 4 + (y * (fil->m_line + 4))] && x < fil->m_line)
+			{
+				i = x + 4 + (y * (fil->m_line + 4));
+				if (fil->map[i] == fil->opp && !fil->start_opp)
+					fil->start_opp = i;
+				if (fil->map[i] == fil->player && !fil->start_ply)
+					fil->start_ply = i;
+					// directions(fil, x, y, i);
+			}
+			fil->mid = ft_strlen(fil->map) / 2;
+			fil->top_left = (2 * 4 + fil->m_col);
+			fil->top_right = fil->top_left + fil->m_col - 1;
+			fil->bot_left = (fil->m_line * (fil->m_col + 4)) - fil->m_col;
+			fil->bot_right = fil->bot_left + fil->m_col - 1;
+			return ;
 		}
-		return ;
+		// while (fil->map[++i])
+		// {
+		// 	if (fil->map[i] == fil->opp && !fil->start_opp)
+		// 		fil->start_opp = i;
+		// 	if (fil->map[i] == fil->player && !fil->start_ply)
+		// 		fil->start_ply = i;
+		// }
+		// fil->mid = ft_strlen(fil->map) / 2;
+		// fil->top_left = (2 * 4 + fil->m_col);
+		// fil->top_right = fil->top_left + fil->m_col - 1;
+		// fil->bot_left = (fil->m_line * (fil->m_col + 4)) - fil->m_col;
+		// fil->bot_right = fil->bot_left + fil->m_col - 1;
+		// return ;
 	}
 	while (fil->map[++i])
 	{
@@ -193,6 +242,10 @@ int		main(void)
 			fil->piece = ft_strjoinfree(fil->piece, line, 3);
 		finding_place(fil);
 		free(fil->piece);
+		// i = open("lili", O_WRONLY | O_APPEND);
+		// ft_putstr_fd(fil->map, i);
+		// ft_putstr_fd("\n\n", i);
+		// close(i);
 		fil->map2 = fil->map;
 		nb = 1;
 	}
