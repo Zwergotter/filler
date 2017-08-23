@@ -58,6 +58,8 @@ void	init(t_fil *fil)
 	fil->nb = 0;
 	fil->start_opp = 0;
 	fil->end_opp = 0;
+	fil->start_ply = 0;
+	fil->end_ply = 0;
 	fil->p_line = 0;
 	fil->p_col = 0;
 }
@@ -119,7 +121,7 @@ void	finding_place(t_fil *fil)
 	ft_putchar('\n');
 }
 
-void	opp_pos(t_fil *fil)
+void	positions(t_fil *fil)
 {
 	int i;
 
@@ -128,18 +130,29 @@ void	opp_pos(t_fil *fil)
 	{
 		while (fil->map[++i])
 		{
-			if (fil->map[i] == fil->opp)
-			{
+			if (fil->map[i] == fil->opp && !fil->start_opp)
 				fil->start_opp = i;
-				return ;
-			}
+			if (fil->map[i] == fil->player && !fil->start_ply)
+				fil->start_ply = i;
 		}
+		return ;
 	}
 	while (fil->map[++i])
 	{
 		if (fil->map[i] != fil->map2[i] && fil->map[i] == fil->opp)
 			fil->end_opp = i;
+		if (fil->map[i] != fil->map2[i] && fil->map[i] == fil->player)
+			fil->end_ply = i;
 	}
+	// ft_putstr_fd("\nStart pos opp is ", 2);
+	// ft_putnbr_fd(fil->start_opp, 2);
+	// ft_putstr_fd(" and end is ", 2);
+	// ft_putnbr_fd(fil->end_opp, 2);
+	// ft_putstr_fd("\nStart pos ply is  ", 2);
+	// ft_putnbr_fd(fil->start_ply, 2);
+	// ft_putstr_fd(" and end is ", 2);
+	// ft_putnbr_fd(fil->end_ply, 2);
+	// ft_putstr_fd(" \n", 2);
 	free(fil->map2);
 }
 
@@ -167,7 +180,7 @@ int		main(void)
 		fil->map = ft_strdup("");
 		while ((i = get_next_line(0, &line)) > 0 && line[0] != 'P')
 			fil->map = ft_strjoinfree(fil->map, line, 3);
-		opp_pos(fil);
+		positions(fil);
 		fil->p_line = ft_atoi(line + 6);
 		i = 0;
 		while (line[i + 7] != ' ')
@@ -179,7 +192,6 @@ int		main(void)
 		while (i++ < fil->p_line && get_next_line(0, &line) > 0)
 			fil->piece = ft_strjoinfree(fil->piece, line, 3);
 		finding_place(fil);
-		// free(fil->map);
 		free(fil->piece);
 		fil->map2 = fil->map;
 		nb = 1;

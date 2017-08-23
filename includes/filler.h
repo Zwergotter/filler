@@ -26,6 +26,8 @@ typedef struct	s_fil
 	int			nb;
 	int			start_opp;
 	int			end_opp;
+	int			start_ply;
+	int			end_ply;
 	int			m_line;
 	int			m_col;
 	int 		p_line;
