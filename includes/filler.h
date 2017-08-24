@@ -37,7 +37,10 @@ typedef struct	s_fil
 	int			m_col;
 	int 		p_line;
 	int			p_col;
+	int 		cur_line;
+	int			cur_col;
 	t_dir		dir;
+	t_dir		dir2;
 }				t_fil;
 
 # endif

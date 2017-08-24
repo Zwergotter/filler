@@ -13,27 +13,6 @@
 #include "includes/filler.h"
 #include <fcntl.h>
 
-// void	init(t_fil *fil, int fd)
-// {
-// 	char *line;
-// 	int i;
-
-// 	get_next_line(fd, &line);
-// 	fil->player = (line[10] == '1' ? 'O' : 'X');
-// 	free(line);
-// 	get_next_line(fd, &line);
-// 	fil->m_col = ft_atoi(line + 8);
-// 	i = 0;
-// 	while (line[i + 9] != ' ')
-// 		i++;
-// 	fil->m_line = ft_atoi(line + i + 9);
-// 	free(line);
-// 	fil->map = NULL;
-// 	fil->piece = NULL;
-// 	fil->p_line = 0;
-// 	fil->p_col = 0;
-// }
-
 void	init(t_fil *fil)
 {
 	char *line;
@@ -44,9 +23,6 @@ void	init(t_fil *fil)
 	fil->opp = (line[10] == '1' ? 'X' : 'O');
 	free(line);
 	get_next_line(0, &line);
-	// ft_putstr_fd("line = ", 2);
-	// ft_putstr_fd(line, 2);
-	// ft_putstr_fd("\n", 2);
 	fil->m_line = ft_atoi(line + 8);
 	i = 0;
 	while (line[i + 9] != ' ')
@@ -62,7 +38,10 @@ void	init(t_fil *fil)
 	fil->end_ply = 0;
 	fil->p_line = 0;
 	fil->p_col = 0;
+	fil->cur_col = 0;
+	fil->cur_line = 0;
 	fil->dir = EMPTY;
+	fil->dir2 = EMPTY;
 }
 
 int		fitting(t_fil *fil, int x, int y)
@@ -100,28 +79,78 @@ int		fitting(t_fil *fil, int x, int y)
 	return (0);
 }
 
-// void	trying_to_fit(t_fil *fil, int pos)
-// {
-// 	if (pos )
-// }
+int	trying_to_fit(t_fil *fil)
+{
+	int x;
+	int	y;
+	int result;
+
+	x = fil->cur_col;
+	y = fil->cur_line;
+	result = 1;
+	if (fil->dir == DESC_RIGHT)
+	{
+		while (!(fitting(fil, y, x)) && y < fil->m_line && x < fil->m_col)
+		{
+			++x;
+			if (!(fitting(fil, y, x)) && x < fil->m_col)
+				y++;
+		}
+	}
+	if (fil->dir == DESC_LEFT)
+	{
+		while (!(fitting(fil, y, x)) && y < fil->m_line && x > -fil->p_col)
+		{
+			--x;
+			if (!(fitting(fil, y, x)) && x > -fil->p_col)
+				y++;
+		}
+	}
+	if (fil->dir == ASC_RIGHT)
+	{
+		while (!(fitting(fil, y, x)) && y > -fil->p_line && x < fil->m_col)
+		{
+			++x;
+			if (!(fitting(fil, y, x)) && x < fil->m_col)
+				y--;
+		}
+	}
+	if (fil->dir == ASC_LEFT)
+	{
+		while (!(fitting(fil, y, x)) && y > -fil->p_line && x > -fil->p_col)
+		{
+			--x;
+			if (!(fitting(fil, y, x)) && x > -fil->p_col)
+				y--;
+		}
+	}
+	if (fitting(fil, y, x))
+	{
+		ft_putnbr(x);
+		ft_putchar(' ');
+		ft_putnbr(y);
+		result = 0;;
+	}
+	return (result);
+}
 
 void	finding_place(t_fil *fil)
 {
-	int	y;
 	int x;
-	int pos;
+	int	y;
+	int result;
 
 	x = -fil->p_line;
 	y = -fil->p_col;
-	pos = (fil->end_ply ? fil->end_ply : fil->start_ply);
-	// trying_to_fit(fil, pos);
-	while (!(fitting(fil, y, x)) && ++x < fil->m_line)
+	result = 1;
+	result = trying_to_fit(fil);
+	while (result && !(fitting(fil, y, x)) && ++x < fil->m_line)
 	{
 		y = -fil->p_col;
 		while (!(fitting(fil, y, x)) && y < fil->m_col)
 			y++;
 	}
-	if (fitting(fil, y, x))
+	if (result == 1 && fitting(fil, y, x))
 	{
 		ft_putnbr(x);
 		ft_putchar(' ');
@@ -130,47 +159,29 @@ void	finding_place(t_fil *fil)
 	ft_putchar('\n');
 }
 
-// void	finding_place(t_fil *fil)
-// {
-// 	int	x;
-// 	int y;
-// 	int pos;
-
-// 	y = -fil->p_line;
-// 	x = -fil->p_col;
-// 	pos = (fil->end_ply ? fil->end_ply : fil->start_ply);
-// 	// trying_to_fit(fil, pos);
-// 	while (!(fitting(fil, x, y)) && ++y < fil->m_line)
-// 	{
-// 		x = -fil->p_col;
-// 		while (!(fitting(fil, x, y)) && x < fil->m_col)
-// 			x++;
-// 	}
-// 	if (fitting(fil, x, y))
-// 	{
-// 		ft_putnbr(y);
-// 		ft_putchar(' ');
-// 		ft_putnbr(x);
-// 	}
-// 	ft_putchar('\n');
-// }
-
-void	directions(t_fil *fil, int x, int y, int i)
+int	directions(t_fil *fil, int x, int y, int i)
 {
 	ft_putstr_fd("\nIN DIRECTIONS\n", 2);
-	fil->start_ply = i;
 
-	if (x <= fil->m_line / 2 && y <= fil->m_col / 2)
-		fil->dir = DESC_RIGHT;
-	if (x <= fil->m_line / 2 && y > fil->m_col / 2)
-		fil->dir = DESC_LEFT;
-	if (x > fil->m_line / 2 && y <= fil->m_col / 2)
-		fil->dir = ASC_RIGHT;
-	if (x > fil->m_line / 2 && y > fil->m_col / 2)
-		fil->dir = ASC_LEFT;
+	if (y <= fil->m_line / 2 && x <= fil->m_col / 2)
+		fil->dir2 = DESC_RIGHT;
+	if (y <= fil->m_line / 2 && x > fil->m_col / 2)
+		fil->dir2 = DESC_LEFT;
+	if (y > fil->m_line / 2 && x <= fil->m_col / 2)
+		fil->dir2 = ASC_RIGHT;
+	if (y > fil->m_line / 2 && x > fil->m_col / 2)
+		fil->dir2 = ASC_LEFT;
+	fil->cur_col = x;
+	fil->cur_line = y;
+	if (!fil->nb)
+		fil->dir = fil->dir2;
+	if (fil->dir != fil->dir2)
+		fil->dir2 = EMPTY;
 	ft_putstr_fd("\nDir is ", 2);
 	ft_putnbr_fd(fil->dir, 2);
 	ft_putstr_fd(" \n", 2);
+	fil->dir = fil->dir2;
+	return (i);
 }
 
 void	positions(t_fil *fil)
@@ -179,68 +190,41 @@ void	positions(t_fil *fil)
 	int	x;
 	int y;
 
-	i = -1;
+	i = 0;
 	x = 0;
 	y = 0;
 	if (fil->nb == 0)
 	{
-		ft_putstr_fd("\nMap saved is: \n", 2);
-		ft_putstr_fd(fil->map, 2);
-		ft_putstr_fd(" \n", 2);
-		while(fil->map[x + 4 + (y * (fil->m_col + 4))] && y < fil->m_line)
+		while (fil->map[x + 4 + (y * (fil->m_col + 4))] && y < fil->m_line)
 		{
 			while (fil->map[x + 4 + (y * (fil->m_col + 4))] && x < fil->m_col)
 			{
 				i = x + 4 + (y * (fil->m_col + 4));
-				ft_putstr_fd("\ni is ", 2);
-				ft_putnbr_fd(i, 2);
-				ft_putstr_fd("   x is ", 2);
-				ft_putnbr_fd(x, 2);
-				ft_putstr_fd(" m_col is ", 2);
-				ft_putnbr_fd(fil->m_col, 2);
-				ft_putstr_fd("   y is ", 2);
-				ft_putnbr_fd(y, 2);
-				ft_putstr_fd(" m_line is ", 2);
-				ft_putnbr_fd(fil->m_line, 2);
-				ft_putstr_fd("   and char is ", 2);
-				ft_putchar_fd(fil->map[i], 2);
-				ft_putstr_fd(" \n", 2);
 				if (fil->map[i] == fil->opp && !fil->start_opp)
 					fil->start_opp = i;
 				if (fil->map[i] == fil->player && !fil->start_ply)
-					// fil->start_ply = i;
-					directions(fil, x, y, i);
+					fil->start_ply = directions(fil, x, y, i);
 				x++;
 			}
 			x = 0;
 			y++;
 		}
-		// while (fil->map[++i])
-		// {
-		// 	if (fil->map[i] == fil->opp && !fil->start_opp)
-		// 		fil->start_opp = i;
-		// 	if (fil->map[i] == fil->player && !fil->start_ply)
-		// 		fil->start_ply = i;
-		// }
-		// return ;
 		return ;
 	}
-	while (fil->map[++i])
+	while (fil->map[x + 4 + (y * (fil->m_col + 4))] && y < fil->m_line)
 	{
+		while (fil->map[x + 4 + (y * (fil->m_col + 4))] && x < fil->m_col)
+		{
+			i = x + 4 + (y * (fil->m_col + 4));
 		if (fil->map[i] != fil->map2[i] && fil->map[i] == fil->opp)
 			fil->end_opp = i;
 		if (fil->map[i] != fil->map2[i] && fil->map[i] == fil->player)
-			fil->end_ply = i;
+			fil->end_ply = directions(fil, x, y, i);
+			x++;
+		}
+		x = 0;
+		y++;
 	}
-	// ft_putstr_fd("\nStart pos opp is ", 2);
-	// ft_putnbr_fd(fil->start_opp, 2);
-	// ft_putstr_fd(" and end is ", 2);
-	// ft_putnbr_fd(fil->end_opp, 2);
-	// ft_putstr_fd("\nStart pos ply is  ", 2);
-	// ft_putnbr_fd(fil->start_ply, 2);
-	// ft_putstr_fd(" and end is ", 2);
-	// ft_putnbr_fd(fil->end_ply, 2);
-	// ft_putstr_fd(" \n", 2);
 	free(fil->map2);
 }
 
@@ -291,51 +275,3 @@ int		main(void)
 	free(fil);
 	return (0);
 }
-
-// int		main(int argc, char **argv)
-// {
-// 	t_fil	*fil;
-// 	char	*line;
-// 	int		fd;
-// 	int 	i;
-
-// 	if (argc != 2)
-// 		return (0);
-// 	fd = open(argv[1], O_RDONLY);
-// 	if (!(fil = malloc(sizeof(t_fil))))
-// 	{
-// 		ft_putstr_fd("Memory allocation failed", 2);
-// 		exit (0);
-// 	}
-// 	init(fil, fd);
-// 	fil->map = ft_strdup("");
-// 	while (get_next_line(fd, &line) > 0 && line[0] != 'P')
-// 		fil->map = ft_strjoinfree(fil->map, line, 3);
-// 	// ft_putstr("\nWe are this player: ");
-// 	// ft_putchar(fil->player);
-// 	// ft_putstr("\nLine is ");
-// 	// ft_putnbr(fil->m_line);
-// 	// ft_putstr(" and col is ");
-// 	// ft_putnbr(fil->m_col);
-// 	fil->p_col = ft_atoi(line + 6);
-// 	i = 0;
-// 	while (line[i + 7] != ' ')
-// 		i++;
-// 	fil->p_line = ft_atoi(line + i + 7);
-// 	free(line);
-// 	fil->piece = ft_strdup("");
-// 	while (get_next_line(fd, &line) > 0)
-// 		fil->piece = ft_strjoinfree(fil->piece, line, 3);
-// 	// ft_putstr("\nLine is ");
-// 	// ft_putnbr(fil->p_line);
-// 	// ft_putstr(" and col is ");
-// 	// ft_putnbr(fil->p_col);
-// 	// ft_putstr("\nMap saved is: \n");
-// 	// ft_putstr(fil->piece);
-// 	finding_place(fil);
-// 	close(fd);
-// 	free(fil->map);
-// 	free(fil->piece);
-// 	free(fil);
-// 	return (0);
-// }
