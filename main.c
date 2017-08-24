@@ -62,11 +62,6 @@ void	init(t_fil *fil)
 	fil->end_ply = 0;
 	fil->p_line = 0;
 	fil->p_col = 0;
-	fil->mid = 0;
-	fil->top_left = 0;
-	fil->top_right = 0;
-	fil->bot_left = 0;
-	fil->bot_right = 0;	
 	fil->dir = EMPTY;
 }
 
@@ -112,35 +107,71 @@ int		fitting(t_fil *fil, int x, int y)
 
 void	finding_place(t_fil *fil)
 {
-	int	x;
-	int y;
+	int	y;
+	int x;
 	int pos;
 
-	y = -fil->p_line;
-	x = -fil->p_col;
+	x = -fil->p_line;
+	y = -fil->p_col;
 	pos = (fil->end_ply ? fil->end_ply : fil->start_ply);
 	// trying_to_fit(fil, pos);
-	while (!(fitting(fil, x, y)) && ++y < fil->m_line)
+	while (!(fitting(fil, y, x)) && ++x < fil->m_line)
 	{
-		x = -fil->p_col;
-		while (!(fitting(fil, x, y)) && x < fil->m_col)
-			x++;
+		y = -fil->p_col;
+		while (!(fitting(fil, y, x)) && y < fil->m_col)
+			y++;
 	}
-	if (fitting(fil, x, y))
+	if (fitting(fil, y, x))
 	{
-		ft_putnbr(y);
-		ft_putchar(' ');
 		ft_putnbr(x);
+		ft_putchar(' ');
+		ft_putnbr(y);
 	}
 	ft_putchar('\n');
 }
 
-// void	directions(t_fil *fil, int x, int y, int i)
+// void	finding_place(t_fil *fil)
 // {
-// 	fil->start_ply = i;
+// 	int	x;
+// 	int y;
+// 	int pos;
 
-// 	if ()
+// 	y = -fil->p_line;
+// 	x = -fil->p_col;
+// 	pos = (fil->end_ply ? fil->end_ply : fil->start_ply);
+// 	// trying_to_fit(fil, pos);
+// 	while (!(fitting(fil, x, y)) && ++y < fil->m_line)
+// 	{
+// 		x = -fil->p_col;
+// 		while (!(fitting(fil, x, y)) && x < fil->m_col)
+// 			x++;
+// 	}
+// 	if (fitting(fil, x, y))
+// 	{
+// 		ft_putnbr(y);
+// 		ft_putchar(' ');
+// 		ft_putnbr(x);
+// 	}
+// 	ft_putchar('\n');
 // }
+
+void	directions(t_fil *fil, int x, int y, int i)
+{
+	ft_putstr_fd("\nIN DIRECTIONS\n", 2);
+	fil->start_ply = i;
+
+	if (x <= fil->m_line / 2 && y <= fil->m_col / 2)
+		fil->dir = DESC_RIGHT;
+	if (x <= fil->m_line / 2 && y > fil->m_col / 2)
+		fil->dir = DESC_LEFT;
+	if (x > fil->m_line / 2 && y <= fil->m_col / 2)
+		fil->dir = ASC_RIGHT;
+	if (x > fil->m_line / 2 && y > fil->m_col / 2)
+		fil->dir = ASC_LEFT;
+	ft_putstr_fd("\nDir is ", 2);
+	ft_putnbr_fd(fil->dir, 2);
+	ft_putstr_fd(" \n", 2);
+}
 
 void	positions(t_fil *fil)
 {
@@ -149,28 +180,40 @@ void	positions(t_fil *fil)
 	int y;
 
 	i = -1;
-	x = -1;
+	x = 0;
 	y = 0;
 	if (fil->nb == 0)
 	{
-		while((fil->map[++y + 4 + (y * (fil->m_line + 4))] && y <= fil->m_col))
+		ft_putstr_fd("\nMap saved is: \n", 2);
+		ft_putstr_fd(fil->map, 2);
+		ft_putstr_fd(" \n", 2);
+		while(fil->map[x + 4 + (y * (fil->m_col + 4))] && y < fil->m_line)
 		{
-			x = -1;
-			while (fil->map[++x + 4 + (y * (fil->m_line + 4))] && x < fil->m_line)
+			while (fil->map[x + 4 + (y * (fil->m_col + 4))] && x < fil->m_col)
 			{
-				i = x + 4 + (y * (fil->m_line + 4));
+				i = x + 4 + (y * (fil->m_col + 4));
+				ft_putstr_fd("\ni is ", 2);
+				ft_putnbr_fd(i, 2);
+				ft_putstr_fd("   x is ", 2);
+				ft_putnbr_fd(x, 2);
+				ft_putstr_fd(" m_col is ", 2);
+				ft_putnbr_fd(fil->m_col, 2);
+				ft_putstr_fd("   y is ", 2);
+				ft_putnbr_fd(y, 2);
+				ft_putstr_fd(" m_line is ", 2);
+				ft_putnbr_fd(fil->m_line, 2);
+				ft_putstr_fd("   and char is ", 2);
+				ft_putchar_fd(fil->map[i], 2);
+				ft_putstr_fd(" \n", 2);
 				if (fil->map[i] == fil->opp && !fil->start_opp)
 					fil->start_opp = i;
 				if (fil->map[i] == fil->player && !fil->start_ply)
-					fil->start_ply = i;
-					// directions(fil, x, y, i);
+					// fil->start_ply = i;
+					directions(fil, x, y, i);
+				x++;
 			}
-			fil->mid = ft_strlen(fil->map) / 2;
-			fil->top_left = (2 * 4 + fil->m_col);
-			fil->top_right = fil->top_left + fil->m_col - 1;
-			fil->bot_left = (fil->m_line * (fil->m_col + 4)) - fil->m_col;
-			fil->bot_right = fil->bot_left + fil->m_col - 1;
-			return ;
+			x = 0;
+			y++;
 		}
 		// while (fil->map[++i])
 		// {
@@ -179,12 +222,8 @@ void	positions(t_fil *fil)
 		// 	if (fil->map[i] == fil->player && !fil->start_ply)
 		// 		fil->start_ply = i;
 		// }
-		// fil->mid = ft_strlen(fil->map) / 2;
-		// fil->top_left = (2 * 4 + fil->m_col);
-		// fil->top_right = fil->top_left + fil->m_col - 1;
-		// fil->bot_left = (fil->m_line * (fil->m_col + 4)) - fil->m_col;
-		// fil->bot_right = fil->bot_left + fil->m_col - 1;
 		// return ;
+		return ;
 	}
 	while (fil->map[++i])
 	{

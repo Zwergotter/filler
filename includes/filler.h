@@ -37,11 +37,6 @@ typedef struct	s_fil
 	int			m_col;
 	int 		p_line;
 	int			p_col;
-	int			mid;
-	int			top_left;
-	int			top_right;
-	int			bot_left;
-	int			bot_right;
 	t_dir		dir;
 }				t_fil;
 
