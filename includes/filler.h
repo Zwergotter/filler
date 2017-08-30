@@ -42,6 +42,9 @@ typedef struct	s_fil
 	int			end_yopp;
 	int			start_ply;
 	int			end_ply;
+	int			high_x;
+	int			high_y;
+	int			nb_opp;
 	t_dir		dir;
 	t_dir		dir2;
 }				t_fil;
