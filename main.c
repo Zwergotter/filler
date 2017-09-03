@@ -333,7 +333,7 @@ int	trying_to_fit(t_fil *fil)
 			{
 				if (fitting(fil, x, y))
 				{
-					if (x > fil->high_x || y < fil->high_y)
+					if (x < fil->high_x && y < fil->high_y)
 					{
 						fil->high_x = x;
 						fil->high_y = y;
@@ -419,8 +419,7 @@ void	finding_place(t_fil *fil)
 	x = -fil->p_line;
 	y = -fil->p_col;
 	result = 0;
-	if (fil->m_col < 30 || fil->m_line < 30)
-		result = trying_to_fit(fil);
+	result = trying_to_fit(fil);
 	// result = result ? result : encircle(fil);
 	result = result ? result : close_to_opp(fil);
 	// result = close_to_opp(fil);
@@ -449,9 +448,9 @@ int	directions(t_fil *fil, int x, int y, int i)
 		fil->dir2 = DESC_RIGHT;
 	if (x < (fil->m_line / 2) + 1 && y > (fil->m_col / 2) - 1)
 		fil->dir2 = DESC_LEFT;
-	if (x < (fil->m_line / 2) - 1 && y < (fil->m_col / 2) + 1)
+	if (x > (fil->m_line / 2) - 1 && y < (fil->m_col / 2) + 1)
 		fil->dir2 = ASC_RIGHT;
-	if (x < (fil->m_line / 2) - 1 && y > (fil->m_col / 2) - 1)
+	if (x > (fil->m_line / 2) - 1 && y > (fil->m_col / 2) - 1)
 		fil->dir2 = ASC_LEFT;
 	fil->cur_line = x;
 	fil->cur_col = y;
@@ -459,11 +458,11 @@ int	directions(t_fil *fil, int x, int y, int i)
 		fil->dir = fil->dir2;
 	if (fil->dir != fil->dir2)
 		fil->dir2 = EDGE;
-	// ft_putstr_fd("\nDir is ", 2);
-	// ft_putnbr_fd(fil->dir, 2);
-	// ft_putstr_fd(" Dir2 is ", 2);
-	// ft_putnbr_fd(fil->dir2, 2);
-	// ft_putstr_fd(" \n", 2);
+	ft_putstr_fd("\nDir is ", 2);
+	ft_putnbr_fd(fil->dir, 2);
+	ft_putstr_fd(" Dir2 is ", 2);
+	ft_putnbr_fd(fil->dir2, 2);
+	ft_putstr_fd(" \n", 2);
 	fil->dir = fil->dir2;
 	return (i);
 }
