@@ -18,7 +18,7 @@
 
 typedef enum		e_dir
 {
-	EMPTY, DESC_RIGHT, DESC_LEFT, ASC_RIGHT, ASC_LEFT
+	EMPTY, DESC_RIGHT, DESC_LEFT, ASC_RIGHT, ASC_LEFT, EDGE
 }					t_dir;
 
 

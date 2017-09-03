@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "includes/filler.h"
 #include <fcntl.h>
 
@@ -41,15 +40,14 @@ void	init(t_fil *fil)
 	fil->p_col = 0;
 	fil->start_xopp = 0;
 	fil->start_yopp = 0;
-	fil->end_xopp = 0;
-	fil->end_yopp = 0;
 	fil->high_x = 0;
 	fil->high_y = 0;
+	fil->end_xopp = 0;
+	fil->end_yopp = 0;
 	fil->start_ply = 0;
 	fil->end_ply = 0;
 	fil->cur_line = 0;
 	fil->cur_col = 0;
-	fil->nb_opp = 0;
 	fil->dir = EMPTY;
 	fil->dir2 = EMPTY;
 }
@@ -182,70 +180,71 @@ int	encircle(t_fil *fil)
 	x = fil->end_xopp ? fil->end_xopp : fil->start_xopp;
 	y = fil->end_yopp ? fil->end_yopp : fil->start_yopp;
 	pos = y + 4 + x * (fil->m_col + 4);
-	if (fil->map[y + 4 + (x * (fil->m_col + 4))] && fitting(fil, x, y))
+	while ((fil->map[pos] || fil->map[pos + (fil->m_col + 4)]) && j + y < fil->m_col + fil->p_col)
 	{
-		printing(x, y);
-		ft_putstr_fd("\nIN CASE1", 2);
-		return (1);
-	}
-	while (fil->map[i + y + 4 + ((x + i) * (fil->m_col + 4))] || fil->map[y + 4 + ((x - i) * (fil->m_col + 4))]
-		|| fil->map[y + 4 + ((x + i) * (fil->m_col + 4)) + (fil->m_col + 4)] || fil->map[y + 4 + ((x - i) * (fil->m_col + 4)) + (fil->m_col + 4)])
-	{
-		if (fil->map[y + 4 + ((x + i) * (fil->m_col + 4))] && fitting(fil, x + i, y))
+		i = 0;
+		while ((fil->map[pos] || fil->map[pos + (fil->m_col + 4)]) && i + x < fil->m_line+ fil->p_line)
 		{
-			printing(x + i, y);
-			ft_putstr_fd("\nIN CASE2", 2);
-			return (1);
-		}
-		if (fil->map[y + 4 + ((x - i) * (fil->m_col + 4))] && fitting(fil, x - i, y))
-		{
-			printing(x - i, y);
-			ft_putstr_fd("\nIN CASE3", 2);
-			return (1);
-		}
-		j = -1;
-		while (++j <= i)
-		{
-			if (fil->map[y + j + 4 + (x * (fil->m_col + 4))] && fitting(fil, x, y + j))
+			if (fitting(fil, x, y))
+			{
+				printing(x, y);
+				ft_putstr_fd("\nIN CASE1", 2);
+				return (1);
+			}
+			if (fitting(fil, x + i, y))
+			{
+				printing(x + i, y);
+				ft_putstr_fd("\nIN CASE2", 2);
+				return (1);
+			}
+			if (fitting(fil, x - i, y))
+			{
+				printing(x - i, y);
+				ft_putstr_fd("\nIN CASE3", 2);
+				return (1);
+			}
+			if (fitting(fil, x, y + j))
 			{
 				printing(x, y + j);
 				ft_putstr_fd("\nIN CASE4", 2);
 				return (1);
 			}
-			if (fil->map[y - j + 4 + (x * (fil->m_col + 4))] && fitting(fil, x, y - j))
+			if (fitting(fil, x, y - j))
 			{
 				printing(x, y - j);
 				ft_putstr_fd("\nIN CASE5", 2);
 				return (1);
 			}
-			if (fil->map[y + j + 4 + ((x + i) * (fil->m_col + 4))] && fitting(fil, x + i, y + j))
+			if (fitting(fil, x + i, y + j))
 			{
 				printing(x + i, y + j);
 				ft_putstr_fd("\nIN CASE6", 2);
 				return (1);
 			}
-			if (fil->map[y - j + 4 + ((x + i) * (fil->m_col + 4))] && fitting(fil, x + i, y - j))
+			if (fitting(fil, x + i, y - j))
 			{
 				printing(x + i, y - j);
 				ft_putstr_fd("\nIN CASE7", 2);
 				return (1);
 			}
-			if (fil->map[y + j + 4 + ((x - i) * (fil->m_col + 4))] && fitting(fil, x - i, y + j))
+			if (fitting(fil, x - i, y + j))
 			{
 				printing(x - i, y + j);
 				ft_putstr_fd("\nIN CASE8", 2);
 				return (1);
 			}
-			if (fil->map[y - j + 4 + ((x - i) * (fil->m_col + 4))] && fitting(fil, x - i, y - j))
+			if (fitting(fil, x - i, y - j))
 			{
 				printing(x - i, y - j);
 				ft_putstr_fd("\nIN CASE9", 2);
 				return (1);
 			}
+			i++;
+			pos = y + j + 4 + ((x + i) * (fil->m_col + 4));
 		}
-		i++;
+		j++;
+		pos = y + j + 4 + ((x + i) * (fil->m_col + 4));
 	}
-	ft_putstr_fd("\nNOPE", 2);
 	return (0);
 }
 
@@ -255,54 +254,161 @@ int	trying_to_fit(t_fil *fil)
 	int	y;
 	int result;
 
-	x = fil->cur_line;
-	y = fil->cur_col;
+	x = 0;
+	y = 0;
 	result = 0;
-	// ft_putstr_fd("\nHERE", 2);
+	ft_putstr_fd("\nHERE", 2);
 	if (fil->dir == DESC_RIGHT)
 	{
-		while (!(fitting(fil, x, y)) && x < fil->m_line && y < fil->m_col)
+		ft_putstr_fd("\nDESC_RIGHT", 2);
+		while (x < fil->m_line + fil->p_line)
 		{
-			++y;
-			if (!(fitting(fil, x, y)) && y < fil->m_col)
-				x++;
+			y = 0;
+			while (y < fil->m_col + fil->p_col)
+			{
+				if (fitting(fil, x, y))
+				{
+					if (x > fil->high_x || y > fil->high_y)
+					{
+						fil->high_x = x;
+						fil->high_y = y;
+					}
+				}
+				y++;
+			}
+			x++;
 		}
 	}
 	if (fil->dir == DESC_LEFT)
 	{
-		while (!(fitting(fil, x, y)) && x < fil->m_line && y > -fil->p_col)
+		ft_putstr_fd("\nDESC_LEFT)", 2);
+		while (x < fil->m_line + fil->p_line)
 		{
-			--y;
-			if (!(fitting(fil, x, y)) && y > -fil->p_col)
-				x++;
+			y = fil->m_col + fil->p_col;
+			while (y > -fil->p_col)
+			{
+				if (fitting(fil, x, y))
+				{
+					if (x > fil->high_x || y < fil->high_y)
+					{
+						fil->high_x = x;
+						fil->high_y = y;
+					}
+				}
+				y--;
+			}
+			x++;
 		}
 	}
 	if (fil->dir == ASC_RIGHT)
 	{
-		while (!(fitting(fil, x, y)) && x > -fil->p_line && y < fil->m_col)
+		x = fil->m_line + fil->p_line;
+		ft_putstr_fd("\nASC_RIGHT", 2);
+		while (x > -fil->p_line)
 		{
-			++y;
-			if (!(fitting(fil, x, y)) && y < fil->m_col)
-				x--;
+			y = 0;
+			while (y < fil->m_col + fil->p_col)
+			{
+				if (fitting(fil, x, y))
+				{
+					if (x < fil->high_x || y > fil->high_y)
+					{
+						fil->high_x = x;
+						fil->high_y = y;
+					}
+				}
+				y++;
+			}
+			x--;
 		}
 	}
 	if (fil->dir == ASC_LEFT)
 	{
-		while (!(fitting(fil, x, y)) && x > -fil->p_line && y > -fil->p_col)
+		x = fil->m_line + fil->p_line;
+		ft_putstr_fd("\nASC_LEFT", 2);
+		while (x > -fil->p_line)
 		{
-			--y;
-			if (!(fitting(fil, x, y)) && y > -fil->p_col)
-				x--;
+			y = fil->m_col + fil->p_col;
+			while (y > -fil->p_col)
+			{
+				if (fitting(fil, x, y))
+				{
+					if (x > fil->high_x || y < fil->high_y)
+					{
+						fil->high_x = x;
+						fil->high_y = y;
+					}
+				}
+				y--;
+			}
+			x--;
 		}
 	}
-	if (fitting(fil, x, y))
+	if(fil->dir == EDGE)
 	{
-		printing(x, y);
+		ft_putstr_fd("\nEDGE", 2);
+		x = fil->m_line / 2 - fil->p_line;		
+		// while (fil->high_y == 0 && x < fil->m_line / 2 + fil->p_line)
+		// {
+		// 	y = fil->m_col / 2;
+		// 	while (fil->high_y == 0 && y < fil->m_col + fil->p_col)
+		while (x < fil->m_line / 2 + fil->p_line)
+		{
+			y = fil->m_col / 2;
+			while (y < fil->m_col + fil->p_col)
+			{
+				if (fitting(fil, x, y))
+				{
+					if (y > fil->high_y)
+					{
+						ft_putstr_fd("\nPLUS", 2);
+						fil->high_x = x;
+						fil->high_y = y;
+					}
+				}
+				y++;
+			}
+			x++;
+		}
+		if (!fitting(fil, fil->high_x, fil->high_y))
+		{
+			x = fil->m_line / 2 - fil->p_line;
+			fil->high_y = fil->m_col;
+			// while (fil->high_y == fil->m_col && x < fil->m_line / 2 + fil->p_line)
+			// {
+			// 	y = fil->m_col / 2;
+			// 	while (fil->high_y == fil->m_col && y > -fil->p_col)
+			while (x < fil->m_line / 2 + fil->p_line)
+			{
+				y = fil->m_col / 2;
+				while (y > -fil->p_col)
+				{
+					if (fitting(fil, x, y))
+					{
+						if (y < fil->high_y)
+						{
+							ft_putstr_fd("\nEDGE minus", 2);
+							fil->high_x = x;
+							fil->high_y = y;
+							break;
+						}
+					}
+					y--;
+				}
+				x++;
+			}
+		}
+	}
+	if (fitting(fil, fil->high_x, fil->high_y))
+	{
+		ft_putstr_fd("\nFIRST", 2);
+		printing(fil->high_x, fil->high_y);
+		fil->high_x = 0;
+		fil->high_y = 0;
 		result = 1;
 	}
 	return (result);
 }
-
 
 void	finding_place(t_fil *fil)
 {
@@ -313,13 +419,12 @@ void	finding_place(t_fil *fil)
 	x = -fil->p_line;
 	y = -fil->p_col;
 	result = 0;
-	// if (fil->dir == fil->dir2 || !fil->nb)
-	// 	result = trying_to_fit(fil);
-	// result = result ? result : encircle(fil);
-	// if (!result)
-	result = close_to_opp(fil);
-	if ((result == 0 && fil->dir == fil->dir2) || !fil->nb)
+	if (fil->m_col < 30 || fil->m_line < 30)
 		result = trying_to_fit(fil);
+	// result = result ? result : encircle(fil);
+	result = result ? result : close_to_opp(fil);
+	// result = close_to_opp(fil);
+	result = result ? result : encircle(fil);
 	if (!result)
 	{
 		x = -fil->p_line;
@@ -327,12 +432,9 @@ void	finding_place(t_fil *fil)
 		{
 			y = -fil->p_col;
 			while (!(fitting(fil, x, y)) && y < fil->m_col)
-			{
-				if (fitting(fil, x, y))
-					ft_putstr_fd("\nYEO", 2);
 				y++;
-			}
 		}
+		ft_putstr_fd("\nNOT", 2);
 	}
 	if (!result && fitting(fil, x, y))
 		printing(x, y);
@@ -343,43 +445,26 @@ void	finding_place(t_fil *fil)
 int	directions(t_fil *fil, int x, int y, int i)
 {
 	// ft_putstr_fd("\nIN DIRECTIONS\n", 2);
-
-	// if (!fil->nb || (fil->m_line > 25 && fil->m_col > 25))
-	// {
-		if (x <= fil->m_line / 2 && y <= fil->m_col / 2)
-			fil->dir2 = DESC_RIGHT;
-		if (x <= fil->m_line / 2 && y > fil->m_col / 2)
-			fil->dir2 = DESC_LEFT;
-		if (x > fil->m_line / 2 && y <= fil->m_col / 2)
-			fil->dir2 = ASC_RIGHT;
-		if (x > fil->m_line / 2 && y > fil->m_col / 2)
-			fil->dir2 = ASC_LEFT;
-	// }
-	// else
-	// {
-	// 	if (fil->dir == DESC_RIGHT && x <= fil->m_line - 2 && y <= fil->m_col - 2)
-	// 		fil->dir2 = DESC_RIGHT;
-	// 	if (fil->dir == DESC_LEFT && x <= fil->m_line - 2 && y > 2)
-	// 		fil->dir2 = DESC_LEFT;
-	// 	if (fil->dir ==  ASC_RIGHT && x > 2 && y <= fil->m_col - 2)
-	// 		fil->dir2 = ASC_RIGHT;
-	// 	if (x > 2 && y > 2)
-	// 		fil->dir2 = ASC_LEFT;
-	// 		ft_putstr_fd("\nDir is ", 2);
-	// ft_putnbr_fd(fil->dir, 2);
-	// ft_putstr_fd(" \n", 2);
-	// }
+	if (x < (fil->m_line / 2) + 1 && y < (fil->m_col / 2) + 1)
+		fil->dir2 = DESC_RIGHT;
+	if (x < (fil->m_line / 2) + 1 && y > (fil->m_col / 2) - 1)
+		fil->dir2 = DESC_LEFT;
+	if (x < (fil->m_line / 2) - 1 && y < (fil->m_col / 2) + 1)
+		fil->dir2 = ASC_RIGHT;
+	if (x < (fil->m_line / 2) - 1 && y > (fil->m_col / 2) - 1)
+		fil->dir2 = ASC_LEFT;
 	fil->cur_line = x;
 	fil->cur_col = y;
 	if (!fil->nb)
 		fil->dir = fil->dir2;
 	if (fil->dir != fil->dir2)
-		fil->dir2 = EMPTY;
+		fil->dir2 = EDGE;
 	// ft_putstr_fd("\nDir is ", 2);
 	// ft_putnbr_fd(fil->dir, 2);
+	// ft_putstr_fd(" Dir2 is ", 2);
+	// ft_putnbr_fd(fil->dir2, 2);
 	// ft_putstr_fd(" \n", 2);
 	fil->dir = fil->dir2;
-	fil->dir2 = EMPTY;
 	return (i);
 }
 
@@ -394,43 +479,41 @@ void	positions(t_fil *fil)
 	y = 0;
 	if (fil->nb == 0)
 	{
-		while (fil->map[x + 4 + (y * (fil->m_col + 4))] && y < fil->m_line)
+		while (x < fil->m_line && fil->map[y + 4 + (x * (fil->m_col + 4))])
 		{
-			while (fil->map[x + 4 + (y * (fil->m_col + 4))] && x < fil->m_col)
+			while (y < fil->m_col && fil->map[y + 4 + (x * (fil->m_col + 4))])
 			{
-				i = x + 4 + (y * (fil->m_col + 4));
+				i = y + 4 + (x * (fil->m_col + 4));
 				if (fil->map[i] == fil->opp && !fil->start_xopp)
-					{
-						fil->start_xopp = x;
-						fil->start_yopp = y;
-					}
+				{
+					fil->start_xopp = x;
+					fil->start_yopp = y;
+				}
 				if (fil->map[i] == fil->player && !fil->start_ply)
 					fil->start_ply = directions(fil, x, y, i);
-					// fil->start_ply = i;
-				x++;
+				y++;
 			}
-			x = 0;
-			y++;
+			y = 0;
+			x++;
 		}
 		return ;
 	}
-	while (fil->map[x + 4 + (y * (fil->m_col + 4))] && y < fil->m_line)
+	while (x < fil->m_line && fil->map[y + 4 + (x * (fil->m_col + 4))])
 	{
-		while (fil->map[x + 4 + (y * (fil->m_col + 4))] && x < fil->m_col)
+		while (y < fil->m_col && fil->map[y + 4 + (x * (fil->m_col + 4))])
 		{
-			i = x + 4 + (y * (fil->m_col + 4));
-		if (fil->map[i] != fil->map2[i] && fil->map[i] == fil->opp)
+			i = y + 4 + (x * (fil->m_col + 4));
+			if (fil->map[i] != fil->map2[i] && fil->map[i] == fil->opp)
 			{
 				fil->end_xopp = x;
 				fil->end_yopp = y;
 			}
-		if (fil->map[i] != fil->map2[i] && fil->map[i] == fil->player)
-			fil->end_ply = directions(fil, x, y, i);
-			// fil->end_ply = i;
-			x++;
+			if (fil->map[i] != fil->map2[i] && fil->map[i] == fil->player)
+				fil->end_ply = directions(fil, x, y, i);
+			y++;
 		}
-		x = 0;
-		y++;
+		y = 0;
+		x++;
 	}
 	free(fil->map2);
 }
