@@ -38,6 +38,8 @@ typedef struct	s_fil
 	int			cur_col;
 	int			start_xopp;
 	int			start_yopp;
+	int			start_xply;
+	int			start_yply;
 	int			end_xopp;
 	int			end_yopp;
 	int			start_ply;
@@ -45,8 +47,21 @@ typedef struct	s_fil
 	int			high_x;
 	int			high_y;
 	int			nb_opp;
+	int			touch;
 	t_dir		dir;
 	t_dir		dir2;
 }				t_fil;
+
+void	finding_place(t_fil *fil);
+int		fitting(t_fil *fil, int x, int y);
+void	printing(int x, int y);
+
+int		close_to_opp(t_fil *fil);
+
+int		trying_to_fit(t_fil *fil);
+
+int		encircle(t_fil *fil);
+
+void	positions(t_fil *fil);
 
 # endif
