@@ -6,7 +6,7 @@
 /*   By: edeveze <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/17 15:11:38 by edeveze           #+#    #+#             */
-/*   Updated: 2017/08/22 15:00:45 by edeveze          ###   ########.fr       */
+/*   Updated: 2017/09/19 15:02:57 by edeveze          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 
 void	put_map(t_fil *f)
 {
-	int i;
-	int j;
-	char *map;
+	int		i;
+	int		j;
+	char	*map;
 
 	(void)map;
 	(void)j;
@@ -32,7 +32,6 @@ void	put_map(t_fil *f)
 		if (f->map[i] == f->player)
 			ft_putstr_fd("\033[46m \033[0m", 2);
 		else if (f->map[i] == '.')
-			// ft_putchar_fd(' ', 2);
 			ft_putstr_fd("\033[44m \033[0m", 2);
 		else
 			ft_putstr_fd("\033[47m \033[0m", 2);
@@ -40,7 +39,7 @@ void	put_map(t_fil *f)
 	}
 	ft_putchar_fd('\n', 2);
 	ft_putchar_fd('\n', 2);
-		usleep(20000);
+	usleep(20000);
 }
 
 void	init_values(t_fil *fil)
@@ -51,29 +50,28 @@ void	init_values(t_fil *fil)
 	fil->nb = 0;
 	fil->p_line = 0;
 	fil->p_col = 0;
-	fil->start_xopp = 0;
-	fil->start_yopp = 0;
+	fil->start_xop = 0;
+	fil->start_yop = 0;
 	fil->high_x = 0;
 	fil->high_y = 0;
-	fil->end_xopp = 0;
-	fil->end_yopp = 0;
+	fil->end_xop = 0;
+	fil->end_yop = 0;
 	fil->start_ply = 0;
 	fil->end_ply = 0;
 	fil->cur_line = 0;
 	fil->cur_col = 0;
-	fil->touch = 0;
 	fil->dir = EMPTY;
 	fil->dir2 = EMPTY;
 }
 
 void	init(t_fil *fil)
 {
-	char *line;
-	int i;
+	char	*line;
+	int		i;
 
 	get_next_line(0, &line);
 	fil->player = (line[10] == '1' ? 'O' : 'X');
-	fil->opp = (line[10] == '1' ? 'X' : 'O');
+	fil->op = (line[10] == '1' ? 'X' : 'O');
 	free(line);
 	get_next_line(0, &line);
 	fil->m_line = ft_atoi(line + 8);
@@ -87,7 +85,7 @@ void	init(t_fil *fil)
 
 void	filler(t_fil *fil, char *line)
 {
-	int 	i;
+	int	i;
 
 	fil->map = ft_strdup("");
 	while ((i = get_next_line(0, &line)) > 0 && line[0] != 'P')
@@ -104,12 +102,12 @@ void	filler(t_fil *fil, char *line)
 	while (i++ < fil->p_line && get_next_line(0, &line) > 0)
 		fil->piece = ft_strjoinfree(fil->piece, line, 3);
 	finding_place(fil);
-	// free(fil->map);
 	fil->map2 = fil->map;
 	put_map(fil);
 	free(fil->piece);
 	fil->nb = 1;
 }
+
 int		main(void)
 {
 	t_fil	*fil;
@@ -118,7 +116,7 @@ int		main(void)
 	if (!(fil = malloc(sizeof(t_fil))))
 	{
 		ft_putstr_fd("Memory allocation failed", 2);
-		exit (0);
+		exit(0);
 	}
 	init(fil);
 	while (1)
