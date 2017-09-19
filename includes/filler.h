@@ -55,7 +55,7 @@ void	finding_place(t_fil *fil);
 int		fitting(t_fil *fil, int x, int y);
 int		printing(int x, int y);
 
-int		close_to_op(t_fil *fil);
+int		encircle(t_fil *fil);
 
 int		which_direction(t_fil *fil);
 void	edge(t_fil *fil);

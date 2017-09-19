@@ -64,7 +64,7 @@ void	finding_place(t_fil *fil)
 
 	x = fil->end_xop ? fil->end_xop: fil->start_xop;;
 	y = fil->end_yop ? fil->end_yop : fil->start_yop;
-	result = ((fil->m_line < 20 || fil->m_col < 20) && (fil->cur_line < x || fil->cur_col < y)) ? going_opp_direction(fil) : close_to_op(fil);
+	result = ((fil->m_line < 20 || fil->m_col < 20) && (fil->cur_line < x || fil->cur_col < y)) ? going_opp_direction(fil) : encircle(fil);
 	result = result ? result : which_direction(fil);
 	if (!result)
 	{
