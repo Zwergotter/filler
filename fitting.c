@@ -13,11 +13,12 @@
 #include "includes/filler.h"
 #include <fcntl.h>
 
-void	printing(int x, int y)
+int	printing(int x, int y)
 {
 		ft_putnbr(x);
 		ft_putchar(' ');
 		ft_putnbr(y);
+		return (1);
 }
 
 int		fitting(t_fil *fil, int x, int y)
@@ -39,7 +40,7 @@ int		fitting(t_fil *fil, int x, int y)
 		{
 			if (fil->piece[j + (i * fil->p_col)] == '*')
 			{
-				if (mv_x < 0 || mv_y < 0 || mv_x >= fil->m_line || mv_y >= fil->m_col || fil->map[mv_y + 4 + mv_x * (fil->m_col + 4)] == fil->opp)
+				if (mv_x < 0 || mv_y < 0 || mv_x >= fil->m_line || mv_y >= fil->m_col || fil->map[mv_y + 4 + mv_x * (fil->m_col + 4)] == fil->op)
 					place = 2;
 				if (mv_x >= 0 && mv_y >= 0 && fil->map[mv_y + 4 + mv_x * (fil->m_col + 4)] == fil->player)
 					place++;
@@ -61,10 +62,10 @@ void	finding_place(t_fil *fil)
 	int y;
 	int result;
 
-	x = fil->end_xopp ? fil->end_xopp: fil->start_xopp;;
-	y = fil->end_yopp ? fil->end_yopp : fil->start_yopp;
-	result = ((fil->m_line < 20 || fil->m_col < 20) && (fil->cur_line < x || fil->cur_col < y)) ? encircle(fil) : close_to_opp(fil);
-	result = result ? result : trying_to_fit(fil);
+	x = fil->end_xop ? fil->end_xop: fil->start_xop;;
+	y = fil->end_yop ? fil->end_yop : fil->start_yop;
+	result = ((fil->m_line < 20 || fil->m_col < 20) && (fil->cur_line < x || fil->cur_col < y)) ? going_opp_direction(fil) : close_to_op(fil);
+	result = result ? result : which_direction(fil);
 	if (!result)
 	{
 		x = -fil->p_line;
@@ -92,5 +93,5 @@ void	finding_place(t_fil *fil)
 		ft_putstr("0 0\n");
 	}
 	ft_putchar('\n');
-	fil->nb_opp = 0;
+	fil->nb_op = 0;
 }
