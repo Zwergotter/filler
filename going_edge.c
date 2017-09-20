@@ -20,7 +20,7 @@ void	edge2(t_fil *fil, int x, int y)
 		y = fil->m_col / 2;
 		while (y < fil->m_col + fil->p_col)
 		{
-			if (fitting(fil, x, y))
+			if (fitting(fil, x, y) == 1)
 			{
 				if (y > fil->high_y)
 				{
@@ -46,7 +46,7 @@ void	edge(t_fil *fil)
 		y = fil->m_col / 2;
 		while (y > -fil->p_col)
 		{
-			if (fitting(fil, x, y))
+			if (fitting(fil, x, y) == 1)
 			{
 				if (y < fil->high_y)
 				{
@@ -59,6 +59,6 @@ void	edge(t_fil *fil)
 		}
 		x++;
 	}
-	if (!fitting(fil, fil->high_x, fil->high_y))
+	if (fitting(fil, fil->high_x, fil->high_y) != 1)
 		edge2(fil, x, y);
 }

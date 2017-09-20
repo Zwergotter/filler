@@ -20,23 +20,23 @@ int	looking_for(t_fil *fil, int i, int j)
 
 	x = fil->end_xop ? fil->end_xop : fil->start_xop;
 	y = fil->end_yop ? fil->end_yop : fil->start_yop;
-	if (fitting(fil, x, y))
+	if (fitting(fil, x, y) == 1)
 		return (printing(x, y));
-	if (fitting(fil, x - i, y))
+	if (fitting(fil, x - i, y) == 1)
 		return (printing(x - i, y));
-	if (fitting(fil, x - i, y + j))
+	if (fitting(fil, x - i, y + j) == 1)
 		return (printing(x - i, y + j));
-	if (fitting(fil, x - i, y - j))
+	if (fitting(fil, x - i, y - j) == 1)
 		return (printing(x - i, y - j));
-	if (fitting(fil, x + i, y))
+	if (fitting(fil, x + i, y) == 1)
 		return (printing(x + i, y));
-	if (fitting(fil, x, y + j))
+	if (fitting(fil, x, y + j) == 1)
 		return (printing(x, y + j));
-	if (fitting(fil, x, y - j))
+	if (fitting(fil, x, y - j) == 1)
 		return (printing(x, y - j));
-	if (fitting(fil, x + i, y + j))
+	if (fitting(fil, x + i, y + j) == 1)
 		return (printing(x + i, y + j));
-	if (fitting(fil, x + i, y - j))
+	if (fitting(fil, x + i, y - j) == 1)
 		return (printing(x + i, y - j));
 	return (0);
 }

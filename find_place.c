@@ -39,6 +39,45 @@ void	end(t_fil *fil)
 	printing(0, 0);
 }
 
+int		placing(t_fil *fil, int mv_x, int mv_y)
+{
+	if (mv_x < 0 || mv_y < 0 || mv_x >= fil->m_line || mv_y >= fil->m_col ||
+		fil->map[mv_y + 4 + mv_x * (fil->m_col + 4)] == fil->op)
+		return (2);
+	if (mv_x >= 0 && mv_y >= 0 &&
+		fil->map[mv_y + 4 + mv_x * (fil->m_col + 4)] == fil->player)
+		return (1);
+	return (0);
+}
+
+int		fitting(t_fil *fil, int x, int y)
+{
+	int place;
+	int i;
+	int j;
+	int mv_x;
+	int mv_y;
+
+	place = 0;
+	i = 0;
+	mv_x = x;
+	while (i < fil->p_line)
+	{
+		mv_y = y;
+		j = 0;
+		while (j < fil->p_col)
+		{
+			if (fil->piece[j + (i * fil->p_col)] == '*')
+				place += placing(fil, mv_x, mv_y);
+			mv_y++;
+			j++;
+		}
+		mv_x++;
+		i++;
+	}
+	return (place);
+}
+
 void	finding_place(t_fil *fil)
 {
 	int	x;
@@ -53,16 +92,16 @@ void	finding_place(t_fil *fil)
 	if (!result)
 	{
 		x = -fil->p_line;
-		while (!(fitting(fil, x, y)) && ++x < fil->m_line)
+		while ((fitting(fil, x, y) != 1) && ++x < fil->m_line)
 		{
 			y = -fil->p_col;
-			while (!(fitting(fil, x, y)) && y < fil->m_col)
+			while ((fitting(fil, x, y) != 1) && y < fil->m_col)
 				y++;
 		}
 	}
-	if (!result && fitting(fil, x, y))
+	if (!result && fitting(fil, x, y) == 1)
 		printing(x, y);
-	if (!result && !fitting(fil, x, y))
+	if (!result && fitting(fil, x, y) != 1)
 		end(fil);
 	ft_putchar('\n');
 	fil->nb_op = 0;

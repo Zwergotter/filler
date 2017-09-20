@@ -23,7 +23,7 @@ void	desc_right(t_fil *fil)
 		y = 0;
 		while (y < fil->m_col + fil->p_col)
 		{
-			if (fitting(fil, x, y))
+			if (fitting(fil, x, y) == 1)
 			{
 				if ((x >= fil->high_x || y >= fil->high_y))
 				{
@@ -48,7 +48,7 @@ void	desc_left(t_fil *fil)
 		y = fil->m_col + fil->p_col;
 		while (y > -fil->p_col)
 		{
-			if (fitting(fil, x, y))
+			if (fitting(fil, x, y) == 1)
 			{
 				if ((x >= fil->high_x || y <= fil->high_y))
 				{
@@ -73,7 +73,7 @@ void	asc_right(t_fil *fil)
 		y = 0;
 		while (y < fil->m_col + fil->p_col)
 		{
-			if (fitting(fil, x, y))
+			if (fitting(fil, x, y) == 1)
 			{
 				if ((x <= fil->high_x || y >= fil->high_y))
 				{
@@ -98,7 +98,7 @@ void	asc_left(t_fil *fil)
 		y = fil->m_col + fil->p_col;
 		while (y > -fil->p_col)
 		{
-			if (fitting(fil, x, y))
+			if (fitting(fil, x, y) == 1)
 			{
 				if ((x <= fil->high_x || y <= fil->high_y))
 				{
@@ -127,7 +127,7 @@ int		which_direction(t_fil *fil)
 		asc_left(fil);
 	if (fil->dir == EDGE)
 		edge(fil);
-	if (fitting(fil, fil->high_x, fil->high_y))
+	if (fitting(fil, fil->high_x, fil->high_y) == 1)
 	{
 		printing(fil->high_x, fil->high_y);
 		fil->high_x = 0;
