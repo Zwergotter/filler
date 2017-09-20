@@ -15,6 +15,7 @@
 
 # include "../libft/includes/libft.h"
 # include <stdio.h>
+# include <fcntl.h>
 
 typedef enum		e_dir
 {

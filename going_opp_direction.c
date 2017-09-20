@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "includes/filler.h"
-#include <fcntl.h>
 
 int	looking_for(t_fil *fil, int i, int j)
 {

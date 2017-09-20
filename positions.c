@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "includes/filler.h"
-#include <fcntl.h>
 
 int		directions(t_fil *fil, int x, int y, int i)
 {

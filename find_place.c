@@ -6,12 +6,11 @@
 /*   By: edeveze <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/19 18:33:06 by edeveze           #+#    #+#             */
-/*   Updated: 2017/09/19 18:34:09 by edeveze          ###   ########.fr       */
+/*   Updated: 2017/09/20 18:24:06 by edeveze          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/filler.h"
-#include <fcntl.h>
 
 int		printing(int x, int y)
 {

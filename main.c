@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "includes/filler.h"
-#include <fcntl.h>
 
 void	put_map(t_fil *f)
 {
@@ -65,7 +64,7 @@ void	init_values(t_fil *fil)
 	fil->dir2 = EMPTY;
 }
 
-void	init(t_fil *fil)
+char	init(t_fil *fil)
 {
 	char	*line;
 	int		i;
@@ -75,6 +74,11 @@ void	init(t_fil *fil)
 	fil->op = (line[10] == '1' ? 'X' : 'O');
 	free(line);
 	get_next_line(0, &line);
+	if (line[1] == 'i')
+	{
+		ft_putstr_fd("\033[1;31mMissing map - can't play\n\033[0m", 2);
+		return (1);
+	}
 	fil->m_line = ft_atoi(line + 8);
 	i = 0;
 	while (line[i + 9] != ' ')
@@ -82,6 +86,7 @@ void	init(t_fil *fil)
 	fil->m_col = ft_atoi(line + i + 9);
 	free(line);
 	init_values(fil);
+	return (0);
 }
 
 void	filler(t_fil *fil, char *line)
@@ -104,7 +109,7 @@ void	filler(t_fil *fil, char *line)
 		fil->piece = ft_strjoinfree(fil->piece, line, 3);
 	finding_place(fil);
 	fil->map2 = fil->map;
-	put_map(fil);
+	// put_map(fil);
 	free(fil->piece);
 	fil->nb = 1;
 }
@@ -119,7 +124,8 @@ int		main(void)
 		ft_putstr_fd("Memory allocation failed", 2);
 		exit(0);
 	}
-	init(fil);
+	if (init(fil))
+		return (666);
 	while (1)
 	{
 		if (!get_next_line(0, &line))
