@@ -52,7 +52,6 @@ void	edge(t_fil *fil)
 				{
 					fil->high_x = x;
 					fil->high_y = y;
-					// break;
 				}
 			}
 			y--;

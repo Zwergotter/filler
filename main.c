@@ -60,6 +60,7 @@ void	init_values(t_fil *fil)
 	fil->end_ply = 0;
 	fil->cur_line = 0;
 	fil->cur_col = 0;
+	fil->close = 0;
 	fil->dir = EMPTY;
 	fil->dir2 = EMPTY;
 }
@@ -123,8 +124,12 @@ int		main(void)
 	{
 		if (!get_next_line(0, &line))
 			break ;
+		free(line);
 		if (fil->nb)
+		{
 			get_next_line(0, &line);
+			free(line);
+		}
 		filler(fil, line);
 	}
 	free(fil);

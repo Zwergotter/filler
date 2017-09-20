@@ -20,7 +20,7 @@
 
 # define BUFF_SIZE 10
 
-typedef struct	s_struct
+typedef struct		s_struct
 {
 	int				fd;
 	int				ret;
@@ -29,7 +29,7 @@ typedef struct	s_struct
 	char			bf[BUFF_SIZE + 1];
 	char			tmp[BUFF_SIZE + 1];
 	struct s_struct	*next;
-}				t_struct;
+}					t_struct;
 
 typedef struct		s_list
 {
