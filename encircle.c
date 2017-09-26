@@ -19,9 +19,9 @@ int		trying(t_fil *f, int x, int y, int place)
 	int mv_x;
 	int mv_y;
 
-	i = 0;
+	i = -1;
 	mv_x = x;
-	while (i < f->p_line)
+	while (++i < f->p_line)
 	{
 		mv_y = y;
 		j = 0;
@@ -30,13 +30,13 @@ int		trying(t_fil *f, int x, int y, int place)
 			if (f->piece[j + (i * f->p_col)] == '*')
 				place += placing(f, mv_x, mv_y);
 			if (f->piece[j + (i * f->p_col)] == '.' && mv_x >= 0 && mv_y >= 0
+				&& mv_x <= f->m_line && mv_y <= f->m_col
 				&& f->map[mv_y + 4 + mv_x * (f->m_col + 4)] == f->op)
 				f->close++;
 			mv_y++;
 			j++;
 		}
 		mv_x++;
-		i++;
 	}
 	return (place);
 }

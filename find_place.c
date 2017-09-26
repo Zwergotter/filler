@@ -43,8 +43,7 @@ int		placing(t_fil *fil, int mv_x, int mv_y)
 	if (mv_x < 0 || mv_y < 0 || mv_x >= fil->m_line || mv_y >= fil->m_col ||
 		fil->map[mv_y + 4 + mv_x * (fil->m_col + 4)] == fil->op)
 		return (2);
-	if (mv_x >= 0 && mv_y >= 0 &&
-		fil->map[mv_y + 4 + mv_x * (fil->m_col + 4)] == fil->player)
+	if (fil->map[mv_y + 4 + mv_x * (fil->m_col + 4)] == fil->player)
 		return (1);
 	return (0);
 }
