@@ -34,7 +34,13 @@ void	end(t_fil *fil)
 			ft_putchar_fd(fil->piece[y + (x * fil->p_col)], 2);
 		ft_putchar_fd('\n', 2);
 	}
-	ft_putchar_fd('\n', 2);
+	ft_putstr_fd("\nPlaying O is: ", 2);
+	fil->player == 'O' ? ft_putstr_fd("\033[1;36medeveze.filler\033[0m", 2)
+		: ft_putstr_fd("\033[1;37mthe opponent\033[0m", 2);
+	ft_putstr_fd("\nPlaying X is: ", 2);
+	fil->player == 'X' ? ft_putstr_fd("\033[1;36medeveze.filler\033[0m", 2)
+		: ft_putstr_fd("\033[1;37mthe opponent\033[0m", 2);
+	ft_putstr_fd("\n\n", 2);
 	printing(0, 0);
 }
 
